@@ -7,7 +7,16 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 $client = new Google\Client();
 
-$client->setAuthConfig(__DIR__ . '/credentials.json');
+$googleCredsJson = getenv('GOOGLE_CREDENTIALS_JSON');
+
+if (!empty($googleCredsJson)) {
+    // Jika berjalan di server Wasmer (membaca dari Environment Variables)
+    $credsArray = json_decode($googleCredsJson, true);
+    $client->setAuthConfig($credsArray);
+} else {
+    // Jika berjalan di komputer lokal / XAMPP
+    $client->setAuthConfig(__DIR__ . '/credentials.json');
+}
 
 $client->setAccessType('offline');
 
@@ -85,4 +94,5 @@ if (count($response->getFiles()) === 0) {
     }
 
     echo '</table>';
+
 }
