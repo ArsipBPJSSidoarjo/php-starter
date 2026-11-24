@@ -38,13 +38,19 @@ $client->setScopes([
     Google\Service\Drive::DRIVE_METADATA_READONLY
 ]);
 
-$tokenPath = __DIR__ . '/storage/token.json';
+// Baca dari Environment Variable Wasmer
+$googleTokenJson = getenv('GOOGLE_TOKEN_JSON');
 
-if (!file_exists($tokenPath)) {
-    die('Token Google Drive belum tersedia.');
+if (!empty($googleTokenJson)) {
+    $token = json_decode($googleTokenJson, true);
+} else {
+    // Fallback untuk lokal (XAMPP)
+    $tokenPath = __DIR__ . '/storage/token.json';
+    if (!file_exists($tokenPath)) {
+        die('Token Google Drive belum tersedia di lokal.');
+    }
+    $token = json_decode(file_get_contents($tokenPath), true);
 }
-
-$token = json_decode(file_get_contents($tokenPath), true);
 
 $client->setAccessToken($token);
 
