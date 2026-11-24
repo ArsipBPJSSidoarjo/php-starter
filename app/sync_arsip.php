@@ -3,7 +3,19 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
-require_once __DIR__ . '/vendor/autoload.php';
+// Coba cari autoload di beberapa kemungkinan lokasi
+$autoloadPaths = [
+    __DIR__ . '/vendor/autoload.php',        // Default (jika di dalam app/)
+    dirname(__DIR__) . '/vendor/autoload.php', // Jika di luar app/
+    '/app/vendor/autoload.php'                // Path absolut Wasmer
+];
+
+foreach ($autoloadPaths as $path) {
+    if (file_exists($path)) {
+        require_once $path;
+        break;
+    }
+}
 
 $client = new Google\Client();
 
